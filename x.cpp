@@ -13,8 +13,8 @@
 int bricks[R][C];
 int brickWidth = 50;
 int brickHeight = 30;
-int topMargin = 80; // Reserved space for UI (score, lives, etc.)
-int leftMargin = (600 - (C * brickWidth)) / 2; // Center horizontally
+int topMargin = 80; // keep space for better looking
+int leftMargin = (600 - (C * brickWidth)) / 2; // center horizontally
 int bar_x = 200, bar_y = 0, bar_width = 100, bar_height = 10, bar_speed = 5;
 int ball_x = 235, ball_y = 10, ball_radius = 10, dx = 5, dy = 5;
 int score = 0;
@@ -73,7 +73,7 @@ int hard[R][C] = {
 };
 
 void save_score_to_file() {
-    FILE *fp = fopen("leaderboard.txt", "a");  // Append mode
+    FILE *fp = fopen("leaderboard.txt", "a");  // append mode
     if (fp != NULL) {
         fprintf(fp, "%s %d\n", playerinfo, score);
         fclose(fp);
@@ -193,7 +193,7 @@ void maingame() {
              int x = leftMargin + j * brickWidth;
             int y = screenheight - topMargin - (i + 1) * brickHeight;
                 if (currentLevel == 3 && bricks[i][j] == 2)
-                    iSetColor(255, 255, 0); // 2-hit bricks
+                    iSetColor(255, 255, 0); //  two hit bricks
                 else if (i % 3 == 0) iSetColor(255, 0, 0);
                 else if (i % 3 == 1) iSetColor(0, 255, 0);
                 else iSetColor(0, 0, 255);
@@ -219,9 +219,9 @@ void iDraw() {
 
         iSetColor(255, 0, 0);
 
-        iText(20, 570, scoreText,  GLUT_BITMAP_HELVETICA_18);    // Left
-        iText(270, 570, levelText,  GLUT_BITMAP_HELVETICA_18);   // Center
-        iText(480, 570, livesText,  GLUT_BITMAP_HELVETICA_18);   // Right
+        iText(20, 570, scoreText,  GLUT_BITMAP_HELVETICA_18);  
+        iText(270, 570, levelText,  GLUT_BITMAP_HELVETICA_18);   
+        iText(480, 570, livesText,  GLUT_BITMAP_HELVETICA_18);  
 
 }
 
@@ -269,13 +269,23 @@ void iMouseMove(int mx, int my) {
 
     bar_x = mx - bar_width / 2;
 
-    // Prevent paddle from going outside screen
+    // stop bar from going out screen
     if (bar_x < 0) bar_x = 0;
     if (bar_x + bar_width > screenwidth) bar_x = screenwidth - bar_width;
 }
 void iMouseDrag(int mx, int my) {}
 void iMouseWheel(int dir, int mx, int my) {}
+/*
 
+currentview=0 ---menupage
+currentview=1 ---maingame
+currentview=2 ---levelpage
+currentview=3 ---instructions
+currentview=4 ---leaderboard
+currentview=5 ---exitpage
+currentview=6 ---gameover
+currentview=7 ---entername
+*/
 void iMouse(int button, int state, int mx, int my) {
     if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
         if (currentview == 0) {
@@ -286,38 +296,40 @@ void iMouse(int button, int state, int mx, int my) {
                       index = 0;
                 
             }
-            if (mx >= 150 && mx <= 364 && my >= 70 && my <= 150) {
+        else if (mx >= 150 && mx <= 364 && my >= 70 && my <= 150) {
                 currentview = 5;
             }
-           if (mx >= 150 && mx <= 364 && my >=300 && my <=360 ) 
+        else if (mx >= 150 && mx <= 364 && my >=300 && my <=360 ) 
            {
-                currentview = 2;
+                 currentview = 7;
+                playerinfo[0] = '\0';
+                index = 0;
              
             }
-            if (mx >= 150 && mx <= 364 && my >=150 && my <=230 ) 
+        else if (mx >= 150 && mx <= 364 && my >=150 && my <=230 ) 
            {
                 currentview = 3;
              
             }                 
-            if (mx >= 150 && mx <= 364 && my >=250 && my <=300 ) 
+        else if (mx >= 150 && mx <= 364 && my >=250 && my <=300 ) 
            {
                 currentview = 4;
               loadLeaderboard();
             } 
 
         }
-           if(currentview==2){
+       else if(currentview==2){
                  if (mx >= 200 && mx <= 364 && my >=300 && my <=370 ) 
                  {
                 currentview = 1;
                 setLevel(3);
                            }
-                if (mx >= 200 && mx <= 364 && my >=440 && my <=520 ) 
+         else if (mx >= 200 && mx <= 364 && my >=440 && my <=520 ) 
                 {
                 currentview = 1;
                 setLevel(1);
                            }
-                 if (mx >= 160 && mx <= 390 && my >=380 && my <=430 )
+           else  if (mx >= 160 && mx <= 390 && my >=380 && my <=430 )
                   {
                 currentview = 1;
                 setLevel(2);
@@ -367,8 +379,7 @@ void iSpecialKeyboard(unsigned char key) {
     }
     if (currentview == 7) {
         if (key == GLUT_KEY_RIGHT) {
-            currentview = 1; 
-            setLevel(1);
+            currentview = 2;     
             scoreSaved=false; // Start game
         } else if (key == GLUT_KEY_END) {
             if (index > 0) {
@@ -402,7 +413,7 @@ void ballmovement() {
             int brickX = leftMargin + j * brickWidth;
             int brickY = screenheight - topMargin - (i + 1) * brickHeight;
 
-            // Check if ball overlaps with this brick
+            //  if ball overlaps with this brick
             if (ball_x + ball_radius >= brickX &&
                 ball_x - ball_radius <= brickX + brickWidth &&
                 ball_y + ball_radius >= brickY &&
@@ -419,8 +430,8 @@ void ballmovement() {
                     score=score +5;  
                 }
 
-                dy = -dy;  // Reflect the ball vertically
-                goto skipLoop;  // Exit both loops early after a hit
+                dy = -dy;  
+                goto skipLoop;  // exit both loops  after a hit
             }
         }
     }
@@ -440,16 +451,15 @@ skipLoop:;
     if (lives <= 0) {
     
 
-    // Update highscore if current score is higher
     if (score > highscore) {
         highscore = score;
-        saveHighScoreToFile(); // <<< Save to file
+        saveHighScoreToFile(); 
     }
 
     currentview = 6;
 
     if (!scoreSaved) {
-        save_score_to_file(); // Save score to leaderboard
+        save_score_to_file(); 
         scoreSaved = true;
     }
 
@@ -476,3 +486,4 @@ int main(int argc, char *argv[]) {
     iInitialize(screenwidth, screenheight, "DX Ball");
     return 0;
 }
+
