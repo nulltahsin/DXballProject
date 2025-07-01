@@ -10,27 +10,21 @@
 #define screenheight 600
 #define R 10
 #define C 12
+
 int bricks[R][C];
-int brickWidth = 50;
-int brickHeight = 30;
-int topMargin = 80; // keep space for better looking
-int leftMargin = (600 - (C * brickWidth)) / 2; // center horizontally
+int brick_width = 50;
+int brick_height = 30;
+int topgap = 80; 
+int leftgap = (600 - (C * brick_width)) / 2; 
 int bar_x = 200, bar_y = 0, bar_width = 100, bar_height = 10, bar_speed = 5;
 int ball_x = 235, ball_y = 10, ball_radius = 10, dx = 5, dy = 5;
 int score = 0;
 int lives = 3;
 int highscore=0;
+
 int currentview = 0;
-int currentLevel = 1;
-char playerinfo[50];
-int namesize=0;
-int index=0;
-
-typedef struct {
-    char name[30];
-    int score;
-} playerrecord;
-
+int currentlevel = 1;
+char playerinfo[500];
 
 
 int easy[R][C] = {
@@ -71,17 +65,24 @@ int hard[R][C] = {
     {0,0,0,0,0,1,1,0,0,0,0,0},
     {0,0,0,0,0,0,0,0,0,0,0,0}
 };
+typedef struct {
+    char name[300];
+    int score;
+} playerrecord;
+
+int namesize=0;
+int index=0;
 
 void save_score_to_file() {
-    FILE *fp = fopen("leaderboard.txt", "a");  // append mode
+    FILE *fp = fopen("leaderboard.txt", "a");  
     if (fp != NULL) {
         fprintf(fp, "%s %d\n", playerinfo, score);
         fclose(fp);
     }
 }
-bool scoreSaved = false;
+bool scorekept = false;
 
-void saveHighScoreToFile() {
+void saving_highscore() {
     FILE *fp = fopen("highscore.txt", "w");
     if (fp != NULL) {
         fprintf(fp, "%d\n", highscore);
@@ -89,7 +90,7 @@ void saveHighScoreToFile() {
     }
 }
 
-void loadHighScoreFromFile() {
+void get_highscore() {
     FILE *fp = fopen("highscore.txt", "r");
     if (fp != NULL) {
         fscanf(fp, "%d", &highscore);
@@ -98,50 +99,54 @@ void loadHighScoreFromFile() {
 }
 
 
-void setLevel(int level){
-    currentLevel = level;
+void setup_level(int level){
+    currentlevel = level;
     dx = 5 + (level - 1) * 2;
+
     dy = 5 + (level - 1) * 2;
-    if (level == 1) memcpy(bricks, easy, sizeof(easy));
-    else if (level == 2) memcpy(bricks, medium, sizeof(medium));
-    else if (level == 3) memcpy(bricks, hard, sizeof(hard));
-    else memcpy(bricks, easy, sizeof(easy));
-// renew ball and bar pos
+
+    if (level == 1) 
+      memcpy(bricks, easy, sizeof(easy));
+    else if (level == 2) 
+       memcpy(bricks, medium, sizeof(medium));
+    else if (level == 3)
+        memcpy(bricks, hard, sizeof(hard));
+    else  
+       memcpy(bricks, easy, sizeof(easy));
+
     ball_x = 235;
     ball_y = 10;
 
     bar_x = 200;
 
-//renew scoring and lives
+
     score = 0;
     lives = 3;
 
-
-
-
 }
-playerrecord leaderboardArray[100];
-int leaderboardCount = 0;
-void loadLeaderboard() {
+playerrecord ranking[100];
+int playernums = 0;
+void showleaderboard() {
     FILE *fp = fopen("leaderboard.txt", "r");
     if (!fp) {
-        leaderboardCount = 0;
+    playernums = 0;
         return;
     }
-    leaderboardCount = 0;
-    while (fscanf(fp, "%s %d", leaderboardArray[leaderboardCount].name, &leaderboardArray[leaderboardCount].score) == 2) {
-        leaderboardCount++;
-        if (leaderboardCount >= 100) break;
+    playernums = 0;
+    while (fscanf(fp, "%s %d", ranking[playernums].name, &ranking[playernums].score) == 2) {
+    playernums++;
+        if (playernums >= 100) 
+        break;
     }
     fclose(fp);
     
-    // Sort by score descending
-    for (int i = 0; i < leaderboardCount - 1; i++) {
-        for (int j = i + 1; j < leaderboardCount; j++) {
-            if (leaderboardArray[j].score > leaderboardArray[i].score) {
-                playerrecord temp = leaderboardArray[i];
-                leaderboardArray[i] = leaderboardArray[j];
-                leaderboardArray[j] = temp;
+    //bubble sorting
+    for (int i = 0; i < playernums - 1; i++) {
+        for (int j = i + 1; j < playernums; j++) {
+            if (ranking[j].score > ranking[i].score) {
+                playerrecord temp = ranking[i];
+                ranking[i] = ranking[j];
+                ranking[j] = temp;
             }
         }
     }
@@ -164,9 +169,9 @@ void gameover(){
 }
 void leaderboard(){
     iShowImage(0, 0, "sprites\\leaderboard.jpg");
-    for (int i = 0; i < leaderboardCount && i < 10; i++) {
+    for (int i = 0; i < playernums && i < 10; i++) {
     char line[50];
-    sprintf(line, "%d. %s : %d", i + 1, leaderboardArray[i].name, leaderboardArray[i].score);
+    sprintf(line, "%d. %s : %d", i + 1, ranking[i].name, ranking[i].score);
     iSetColor(0,0,0);
     iText(200, 420 - i * 30, line, GLUT_BITMAP_HELVETICA_18);
 }
@@ -190,15 +195,15 @@ void maingame() {
     for (int i = 0; i < R; i++) {
         for (int j = 0; j < C; j++) {
             if (bricks[i][j] > 0) {
-             int x = leftMargin + j * brickWidth;
-            int y = screenheight - topMargin - (i + 1) * brickHeight;
-                if (currentLevel == 3 && bricks[i][j] == 2)
+             int x = leftgap + j * brick_width;
+            int y = screenheight - topgap - (i + 1) * brick_height;
+                if (currentlevel == 3 && bricks[i][j] == 2)
                     iSetColor(255, 255, 0); //  two hit bricks
                 else if (i % 3 == 0) iSetColor(255, 0, 0);
                 else if (i % 3 == 1) iSetColor(0, 255, 0);
                 else iSetColor(0, 0, 255);
 
-                 iFilledRectangle(x, y, brickWidth, brickHeight);
+                 iFilledRectangle(x, y, brick_width, brick_height);
             }
         }
     }
@@ -215,7 +220,7 @@ void iDraw() {
 
         sprintf(scoreText, "Score: %d", score);
         sprintf(livesText, "Lives: %d ", lives);
-        sprintf(levelText, "Level %d", currentLevel);
+        sprintf(levelText, "Level %d", currentlevel);
 
         iSetColor(255, 0, 0);
 
@@ -231,18 +236,32 @@ void iDraw() {
     
 
 
-    else if (currentview == 0) welcomepage(); 
-    else if(currentview==2) levelpage();
-    else if (currentview == 5) exitpage();
-    else if(currentview==3) instructions();
-    else if(currentview==6)//gameover
-    {
+    else if (currentview == 0) 
+   
+    welcomepage(); 
+
+    else if(currentview==2)
+     
+    levelpage();
+
+    else if (currentview == 5) 
+    
+    exitpage();
+
+    else if(currentview==3)
+
+    instructions();
+
+    else if(currentview==6){
          gameover();
         char scoreshow[30];
         char highscoreshow[30];
         sprintf(scoreshow , "Your Score : %d",score);
+
        sprintf(highscoreshow , "High Score : %d",highscore);
+
        iSetColor(255,255,255);
+
        iText(200,250,scoreshow,GLUT_BITMAP_TIMES_ROMAN_24);
        iText(200,220,highscoreshow,GLUT_BITMAP_TIMES_ROMAN_24);
        iText(150,170,"Press 'Home' to return to Main Menu",GLUT_BITMAP_HELVETICA_18);
@@ -254,6 +273,7 @@ void iDraw() {
 }
      else if(currentview==7){
         entername();
+
        iSetColor(0,0,0);
        iText(130,325,playerinfo,GLUT_BITMAP_HELVETICA_18);
 
@@ -269,14 +289,18 @@ void iMouseMove(int mx, int my) {
 
     bar_x = mx - bar_width / 2;
 
-    // stop bar from going out screen
-    if (bar_x < 0) bar_x = 0;
-    if (bar_x + bar_width > screenwidth) bar_x = screenwidth - bar_width;
+    
+    if (bar_x < 0) 
+
+    bar_x = 0;
+    if (bar_x + bar_width > screenwidth)
+
+     bar_x = screenwidth - bar_width;
 }
 void iMouseDrag(int mx, int my) {}
 void iMouseWheel(int dir, int mx, int my) {}
 /*
-
+for your convenience:
 currentview=0 ---menupage
 currentview=1 ---maingame
 currentview=2 ---levelpage
@@ -292,7 +316,8 @@ void iMouse(int button, int state, int mx, int my) {
             if (mx >= 200 && mx <= 364 && my >= 360 && my <= 430) {
 
                 currentview=7;
-                    playerinfo[0] = '\0'; // resets name
+
+                    playerinfo[0] = '\0'; 
                       index = 0;
                 
             }
@@ -314,7 +339,7 @@ void iMouse(int button, int state, int mx, int my) {
         else if (mx >= 150 && mx <= 364 && my >=250 && my <=300 ) 
            {
                 currentview = 4;
-              loadLeaderboard();
+              showleaderboard();
             } 
 
         }
@@ -322,17 +347,17 @@ void iMouse(int button, int state, int mx, int my) {
                  if (mx >= 200 && mx <= 364 && my >=300 && my <=370 ) 
                  {
                 currentview = 1;
-                setLevel(3);
+                setup_level(3);
                            }
          else if (mx >= 200 && mx <= 364 && my >=440 && my <=520 ) 
                 {
                 currentview = 1;
-                setLevel(1);
+                setup_level(1);
                            }
            else  if (mx >= 160 && mx <= 390 && my >=380 && my <=430 )
                   {
                 currentview = 1;
-                setLevel(2);
+                setup_level(2);
                            }
 
                           }
@@ -341,9 +366,17 @@ void iMouse(int button, int state, int mx, int my) {
 }
 }
 void iKeyboard(unsigned char key) {
-    if (key == '1') setLevel(1);
-    if (key == '2') setLevel(2);
-    if (key == '3') setLevel(3);
+    if (key == '1')
+
+     setup_level(1);
+
+    if (key == '2')
+
+     setup_level(2);
+    if (key == '3') 
+
+    setup_level(3);
+
     if (key == 'q' || key == 'Q') {
     currentview = 5;
 
@@ -357,7 +390,8 @@ void iKeyboard(unsigned char key) {
     if (currentview == 7) {
         if (index < 29 && key >= 32 && key <= 126) {
             playerinfo[index++] = key;
-            playerinfo[index] = '\0';
+
+             playerinfo[index] = '\0';
         }
     }
 
@@ -373,15 +407,18 @@ void iSpecialKeyboard(unsigned char key) {
     currentview = 0;
     score=0;
     lives=3;
-    scoreSaved=false;
+    scorekept=false;
 }
 
     }
     if (currentview == 7) {
         if (key == GLUT_KEY_RIGHT) {
-            currentview = 2;     
-            scoreSaved=false; // Start game
-        } else if (key == GLUT_KEY_END) {
+            currentview = 2;  
+
+            scorekept=false; 
+            // Start game
+        } 
+        else if (key == GLUT_KEY_END) {
             if (index > 0) {
                 index--;
                 playerinfo[index] = '\0';
@@ -402,44 +439,51 @@ void ballmovement() {
     ball_x += dx;
     ball_y += dy;
 
-    if (ball_x - ball_radius <= 0 || ball_x + ball_radius >= screenwidth) dx = -dx;
-    if (ball_y + ball_radius >= screenheight) dy = -dy;
+    if (ball_x -ball_radius <= 0 || ball_x +ball_radius >= screenwidth)
+
+     dx = -dx;
+    if (ball_y+ ball_radius >= screenheight) 
+
+    dy = -dy;
 
 
 
     for (int i = 0; i < R; i++) {
-    for (int j = 0; j < C; j++) {
-        if (bricks[i][j] > 0) {
-            int brickX = leftMargin + j * brickWidth;
-            int brickY = screenheight - topMargin - (i + 1) * brickHeight;
 
-            //  if ball overlaps with this brick
-            if (ball_x + ball_radius >= brickX &&
-                ball_x - ball_radius <= brickX + brickWidth &&
-                ball_y + ball_radius >= brickY &&
-                ball_y - ball_radius <= brickY + brickHeight) {
+       for (int j = 0; j < C; j++) 
+       {
+             if (bricks[i][j] > 0) {
+            int brickX =leftgap + j * brick_width;
 
-               // brick breaking
+            int brickY = screenheight - topgap - (i + 1) * brick_height;
+
+            
+            if (ball_x + ball_radius >= brickX && ball_x - ball_radius <= brickX + brick_width && ball_y + ball_radius >= brickY && ball_y - ball_radius <= brickY + brick_height)
+             {
+
+               
                 if (bricks[i][j] == 1) {
                     bricks[i][j] = 0;
+
                     score=score+5;  
                 } 
                 
                 else if (bricks[i][j] == 2) {
                     bricks[i][j] = 1;
+
                     score=score +5;  
                 }
 
                 dy = -dy;  
-                goto skipLoop;  // exit both loops  after a hit
+                goto skipLoop;  
             }
         }
     }
 }
 skipLoop:;
 
-    if (ball_y <= bar_y + bar_height &&
-        ball_x + ball_radius >= bar_x && ball_x <= bar_x + bar_width)
+    if (ball_y <= bar_y + bar_height &&  ball_x + ball_radius >= bar_x && ball_x <= bar_x + bar_width)
+
         dy = -dy;
 
 
@@ -453,14 +497,15 @@ skipLoop:;
 
     if (score > highscore) {
         highscore = score;
-        saveHighScoreToFile(); 
+        saving_highscore(); 
     }
 
     currentview = 6;
 
-    if (!scoreSaved) {
+    if (!scorekept) {
         save_score_to_file(); 
-        scoreSaved = true;
+
+        scorekept = true;
     }
 
     return;
@@ -469,6 +514,7 @@ skipLoop:;
 
 
     if (ball_y < 0) {
+
         ball_x = bar_x + bar_width / 2;
         ball_y = bar_y + bar_height + 5;
 
@@ -480,10 +526,9 @@ skipLoop:;
 
 int main(int argc, char *argv[]) {
     glutInit(&argc, argv);
-    loadHighScoreFromFile();
-    setLevel(1);
+    get_highscore();
+    setup_level(1);
     iSetTimer(20, ballmovement);
     iInitialize(screenwidth, screenheight, "DX Ball");
     return 0;
 }
-
