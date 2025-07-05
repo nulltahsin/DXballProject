@@ -10,7 +10,6 @@
 #define screenheight 600
 #define R 10
 #define C 12
-
 int bricks[R][C];
 int brick_width = 50;
 int brick_height = 30;
@@ -74,7 +73,7 @@ int namesize=0;
 int index=0;
 
 void save_score_to_file() {
-    FILE *fp = fopen("leaderboard.txt", "a");  
+    FILE *fp = fopen("saves/leaderboard.txt", "a");  
     if (fp != NULL) {
         fprintf(fp, "%s %d\n", playerinfo, score);
         fclose(fp);
@@ -83,7 +82,7 @@ void save_score_to_file() {
 bool scorekept = false;
 
 void saving_highscore() {
-    FILE *fp = fopen("highscore.txt", "w");
+    FILE *fp = fopen("saves/highscore.txt", "w");
     if (fp != NULL) {
         fprintf(fp, "%d\n", highscore);
         fclose(fp);
@@ -91,7 +90,7 @@ void saving_highscore() {
 }
 
 void get_highscore() {
-    FILE *fp = fopen("highscore.txt", "r");
+    FILE *fp = fopen("saves/highscore.txt", "r");
     if (fp != NULL) {
         fscanf(fp, "%d", &highscore);
         fclose(fp);
@@ -127,7 +126,7 @@ void setup_level(int level){
 playerrecord ranking[100];
 int playernums = 0;
 void showleaderboard() {
-    FILE *fp = fopen("leaderboard.txt", "r");
+    FILE *fp = fopen("saves/leaderboard.txt", "r");
     if (!fp) {
     playernums = 0;
         return;
@@ -152,23 +151,23 @@ void showleaderboard() {
     }
 }
 void welcomepage() {
-    iShowImage(0, 0, "sprites\\homepage3.jpg");
+    iShowImage(0, 0, "assets/sprites/homepage3.jpg");
 }
 
 void exitpage() {
-    iShowImage(0, 0, "sprites\\exitgame.jpeg");
+    iShowImage(0, 0, "assets/sprites/exitgame.jpeg");
 }
 void levelpage(){
-    iShowImage(0, 0, "sprites\\level1.jpg");
+    iShowImage(0, 0, "assets/sprites/level1.jpg");
 }
 void instructions(){
-    iShowImage(0, 0, "sprites\\instructions.png");
+    iShowImage(0, 0, "assets/sprites/instructions.png");
 }
 void gameover(){
-    iShowImage(0, 0, "sprites\\gameover1.jpg");
+    iShowImage(0, 0, "assets/sprites/gameover1.jpg");
 }
 void leaderboard(){
-    iShowImage(0, 0, "sprites\\leaderboard.jpg");
+    iShowImage(0, 0, "assets/sprites/leaderboard.jpg");
     for (int i = 0; i < playernums && i < 10; i++) {
     char line[50];
     sprintf(line, "%d. %s : %d", i + 1, ranking[i].name, ranking[i].score);
@@ -177,7 +176,7 @@ void leaderboard(){
 }
 }
 void entername(){
-     iShowImage(0, 0, "sprites\\name.jpg");
+     iShowImage(0, 0, "assets/sprites/name.jpg");
 }
 void populateimages(){
 
@@ -186,11 +185,11 @@ void populateimages(){
 
 
 void maingame() {
-    iShowImage(0, 0, "sprites\\background1.jpg");
+    iShowImage(0, 0, "assets/sprites/background1.jpg");
 
     iSetColor(255, 255, 0);
     iFilledCircle(ball_x, ball_y, ball_radius);
-    iShowImage(bar_x, bar_y, "sprites\\bar.png");
+    iShowImage(bar_x, bar_y, "assets/sprites/bar.png");
 
     for (int i = 0; i < R; i++) {
         for (int j = 0; j < C; j++) {
@@ -198,10 +197,13 @@ void maingame() {
              int x = leftgap + j * brick_width;
             int y = screenheight - topgap - (i + 1) * brick_height;
                 if (currentlevel == 3 && bricks[i][j] == 2)
-                    iSetColor(255, 255, 0); //  two hit bricks
-                else if (i % 3 == 0) iSetColor(255, 0, 0);
-                else if (i % 3 == 1) iSetColor(0, 255, 0);
-                else iSetColor(0, 0, 255);
+                    iSetColor(255, 255, 0); 
+                else if (i % 3 == 0) 
+                iSetColor(255, 0, 0);
+                else if (i % 3 == 1) 
+                iSetColor(0, 255, 0);
+                else 
+                iSetColor(0, 0, 255);
 
                  iFilledRectangle(x, y, brick_width, brick_height);
             }
@@ -213,7 +215,8 @@ void iDraw() {
     iClear();
     if (currentview==1)
     {
-         maingame();        
+         maingame(); 
+                
         char scoreText[20];
         char livesText[20];
         char levelText[20];
@@ -278,7 +281,7 @@ void iDraw() {
        iText(130,325,playerinfo,GLUT_BITMAP_HELVETICA_18);
 
        iSetColor(255,0,0);
-      iText(80,150,"Press Right to start game and 'END' for backspace",GLUT_BITMAP_TIMES_ROMAN_24);
+      iText(40,150,"Press Right Arrow to start game and 'END' for backspace",GLUT_BITMAP_TIMES_ROMAN_24);
 
      }
 
