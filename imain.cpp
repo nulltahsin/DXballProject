@@ -187,7 +187,7 @@ void showleaderboard()
     while (fscanf(fp, "%s %d", ranking[playernums].name, &ranking[playernums].score) == 2)
     {
         playernums++;
-        if (playernums >= 100)
+        if (playernums >= 1000)
             break;
     }
     fclose(fp);
@@ -660,12 +660,14 @@ void iMouse(int button, int state, int mx, int my)
             {
                 currentview = 5;
                 exit(0);
+                
             }
             else if (mx >= 150 && mx <= 364 && my >= 360 && my <= 395)
             {
                 currentview = 7;
                 playerinfo[0] = '\0';
                 index = 0;
+                
             }
             else if (mx >= 150 && mx <= 364 && my >= 200 && my <= 235)
             {
@@ -916,21 +918,7 @@ void ballmovement()
                         bricks[i][j] = 0;
                         score += 5;
                     }
-                    // if (rand() % 5 == 0)
-                    // {
-
-                    //     for (int q = 0; q < MAXPOWERUP; q++)
-                    //     {
-                    //         if (powerup[q].enable == 0)
-                    //         {
-                    //             powerup[q].enable = 1;
-                    //             powerup[q].x = brickx + brick_width / 2;
-                    //             powerup[q].y = bricky;
-                    //             powerup[q].functionality = rand() % 2;
-                    //             break;
-                    //         }
-                    //     }
-                    // }
+                    
                     if (ball_x + ball_radius >= brickx && ball_x - ball_radius <= brickx + brick_width)
                     {
                         dy = -dy;
@@ -1042,4 +1030,3 @@ int main(int argc, char *argv[])
     iInitialize(screenwidth, screenheight, "DX Ball");
     return 0;
 }
-// akbar sir shera
