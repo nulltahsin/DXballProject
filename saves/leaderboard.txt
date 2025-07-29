@@ -102,3 +102,5 @@ yt 30
 tahsin 110
 gh 40
 yt 30
+NOName 125
+NoName 210

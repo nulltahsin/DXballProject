@@ -659,6 +659,7 @@ void iMouse(int button, int state, int mx, int my)
             else if (mx >= 150 && mx <= 364 && my >= 65 && my <= 130)
             {
                 currentview = 5;
+                exit(0);
             }
             else if (mx >= 150 && mx <= 364 && my >= 360 && my <= 395)
             {
