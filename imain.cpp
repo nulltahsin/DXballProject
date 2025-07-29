@@ -242,14 +242,14 @@ void savegameafterexit()
     if (fp!=NULL)
     {
 
-        fprintf(fp, "Score: %d\n", state.score);
-        fprintf(fp, "Current Level: %d\n", state.currentlevel);
-        fprintf(fp, "Bar X: %d\n", state.bar_x);
-        fprintf(fp, "Ball X: %d\n", state.ball_x);
-        fprintf(fp, "Ball Y: %d\n", state.ball_y);
-        fprintf(fp, "DX: %d\n", state.dx);
-        fprintf(fp, "DY: %d\n", state.dy);
-        fprintf(fp, "Lives: %d\n", state.lives);
+        fprintf(fp, "score: %d\n", state.score);
+        fprintf(fp, "current Level: %d\n", state.currentlevel);
+        fprintf(fp, "bar x: %d\n", state.bar_x);
+        fprintf(fp, "ball x: %d\n", state.ball_x);
+        fprintf(fp, "ball y: %d\n", state.ball_y);
+        fprintf(fp, "dx: %d\n", state.dx);
+        fprintf(fp, "dy: %d\n", state.dy);
+        fprintf(fp, "lives: %d\n", state.lives);
 
         for (int i = 0; i < R; i++)
         {
@@ -274,29 +274,29 @@ bool loadgameagain()
 
     prevstate state;
 
-    int result = fscanf(fp, "Score: %d\n", &state.score);
+    int result = fscanf(fp, "score: %d\n", &state.score);
     if (result != 1)
         return false;
 
-    result = fscanf(fp, "Current Level: %d\n", &state.currentlevel);
+    result = fscanf(fp, "current level: %d\n", &state.currentlevel);
     if (result != 1)
         return false;
-    result = fscanf(fp, "Bar X: %d\n", &state.bar_x);
+    result = fscanf(fp, "bar x: %d\n", &state.bar_x);
     if (result != 1)
         return false;
-    result = fscanf(fp, "Ball X: %d\n", &state.ball_x);
+    result = fscanf(fp, "ball X: %d\n", &state.ball_x);
     if (result != 1)
         return false;
-    result = fscanf(fp, "Ball Y: %d\n", &state.ball_y);
+    result = fscanf(fp, "ball Y: %d\n", &state.ball_y);
     if (result != 1)
         return false;
-    result = fscanf(fp, "DX: %d\n", &state.dx);
+    result = fscanf(fp, "dx: %d\n", &state.dx);
     if (result != 1)
         return false;
-    result = fscanf(fp, "DY: %d\n", &state.dy);
+    result = fscanf(fp, "dy: %d\n", &state.dy);
     if (result != 1)
         return false;
-    result = fscanf(fp, "Lives: %d\n", &state.lives);
+    result = fscanf(fp, "lives: %d\n", &state.lives);
     if (result != 1)
         return false;
 
@@ -578,7 +578,7 @@ void iDraw()
     }
     else if (currentview == 4)
     {
-
+         showleaderboard();
         leaderboard();
     }
     else if (currentview == 7)
