@@ -19,7 +19,7 @@ int topgap = 80;
 int leftgap = (600 - (C * brick_width)) / 2;
 int bar_x = 200, bar_y = 0, bar_width = 100, bar_height = 10, bar_speed = 5;
 int ball_x = 235, ball_y = bar_y + bar_height + 15, ball_radius = 10;
-int speed = 15;
+int speed = 10;
 int theta = 60;
 int dx = (int)speed * cos(theta * PI / 180);
 int dy = (int)speed * sin(theta * PI / 180);
@@ -239,17 +239,17 @@ void savegameafterexit()
     }
 
     FILE *fp = fopen("saves/savegame.txt", "w");
-    if (fp!=NULL)
+    if (fp)
     {
 
-        fprintf(fp, "score: %d\n", state.score);
-        fprintf(fp, "current Level: %d\n", state.currentlevel);
-        fprintf(fp, "bar x: %d\n", state.bar_x);
-        fprintf(fp, "ball x: %d\n", state.ball_x);
-        fprintf(fp, "ball y: %d\n", state.ball_y);
-        fprintf(fp, "dx: %d\n", state.dx);
-        fprintf(fp, "dy: %d\n", state.dy);
-        fprintf(fp, "lives: %d\n", state.lives);
+        fprintf(fp, "Score: %d\n", state.score);
+        fprintf(fp, "Current Level: %d\n", state.currentlevel);
+        fprintf(fp, "Bar X: %d\n", state.bar_x);
+        fprintf(fp, "Ball X: %d\n", state.ball_x);
+        fprintf(fp, "Ball Y: %d\n", state.ball_y);
+        fprintf(fp, "DX: %d\n", state.dx);
+        fprintf(fp, "DY: %d\n", state.dy);
+        fprintf(fp, "Lives: %d\n", state.lives);
 
         for (int i = 0; i < R; i++)
         {
@@ -264,7 +264,7 @@ void savegameafterexit()
     }
 }
 
-bool loadgameagain()
+bool load_game_state()
 {
     FILE *fp = fopen("saves/savegame.txt", "r");
     if (fp == NULL)
@@ -274,29 +274,29 @@ bool loadgameagain()
 
     prevstate state;
 
-    int result = fscanf(fp, "score: %d\n", &state.score);
+    int result = fscanf(fp, "Score: %d\n", &state.score);
     if (result != 1)
         return false;
 
-    result = fscanf(fp, "current level: %d\n", &state.currentlevel);
+    result = fscanf(fp, "Current Level: %d\n", &state.currentlevel);
     if (result != 1)
         return false;
-    result = fscanf(fp, "bar x: %d\n", &state.bar_x);
+    result = fscanf(fp, "Bar X: %d\n", &state.bar_x);
     if (result != 1)
         return false;
-    result = fscanf(fp, "ball X: %d\n", &state.ball_x);
+    result = fscanf(fp, "Ball X: %d\n", &state.ball_x);
     if (result != 1)
         return false;
-    result = fscanf(fp, "ball Y: %d\n", &state.ball_y);
+    result = fscanf(fp, "Ball Y: %d\n", &state.ball_y);
     if (result != 1)
         return false;
-    result = fscanf(fp, "dx: %d\n", &state.dx);
+    result = fscanf(fp, "DX: %d\n", &state.dx);
     if (result != 1)
         return false;
-    result = fscanf(fp, "dy: %d\n", &state.dy);
+    result = fscanf(fp, "DY: %d\n", &state.dy);
     if (result != 1)
         return false;
-    result = fscanf(fp, "lives: %d\n", &state.lives);
+    result = fscanf(fp, "Lives: %d\n", &state.lives);
     if (result != 1)
         return false;
 
@@ -335,7 +335,7 @@ bool loadgameagain()
     return true;
 }
 
-bool saveexist()
+bool save_exists()
 {
     FILE *fp = fopen("saves/savegame.bin", "rb");
     if (fp)
@@ -348,10 +348,15 @@ bool saveexist()
 
 void afterexiting()
 {
-    if (currentview == 1)
-    { 
-        // inside game
+    if (currentview == 1) // inside game
+    {
         savegameafterexit();
+
+       
+        if (scorekept!=1 && strlen(playerinfo) > 0 && score > 0) {
+            addscoreinboard();
+            scorekept = true;
+        }
     }
 }
 void welcomepage()
@@ -384,7 +389,7 @@ void settings()
 }
 void gameover()
 {
-    // iStopAllSounds();
+    readhighscore();
     if (score > highscore)
     {
         highscore = score;
@@ -403,7 +408,7 @@ void leaderboard()
 {
     // iStopAllSounds();
     iShowImage(0, 0, "assets/sprites/leaderboard.jpg");
-    for (int i = 0; i < playernums && i < 10; i++)
+    for (int i = 0; i < playernums && i < 15; i++)
     {
         char line[50];
         sprintf(line, "%d. %s : %d", i + 1, ranking[i].name, ranking[i].score);
@@ -423,7 +428,7 @@ void creditspage()
 }
 void wongame()
 {
-    // iStopAllSounds();
+    readhighscore();
     iShowImage(0, 0, "assets/sprites/won.png");
     // char highscoreText[100];
     char scoreshow[100];
@@ -578,7 +583,7 @@ void iDraw()
     }
     else if (currentview == 4)
     {
-         showleaderboard();
+
         leaderboard();
     }
     else if (currentview == 7)
@@ -660,20 +665,18 @@ void iMouse(int button, int state, int mx, int my)
             {
                 currentview = 5;
                 exit(0);
-                
             }
             else if (mx >= 150 && mx <= 364 && my >= 360 && my <= 395)
             {
                 currentview = 7;
                 playerinfo[0] = '\0';
                 index = 0;
-                
             }
             else if (mx >= 150 && mx <= 364 && my >= 200 && my <= 235)
             {
-                if (saveexist())
+                if (save_exists())
                 {
-                    if (loadgameagain())
+                    if (load_game_state())
                     {
                         currentview = 1; 
                         paused = 0;
@@ -743,20 +746,30 @@ void iKeyboard(unsigned char key)
     }
 }
 
-    if (key == 27)
-    { // press Esc 
-        if (currentview == 1)
-        {
-            currentview = 6;
+
+        
+   if (key == 27)
+{ // press Esc to go to home page anytime
+    if (currentview == 1)
+    {
+       
+        if (scorekept!=1 && strlen(playerinfo) > 0 && score > 0) {
+            addscoreinboard();
+            scorekept = true;
         }
-        else
-        {
-            currentview = 0;
-            score = 0;
-            lives = 3;
-            scorekept = false;
-        }
+        currentview = 6;
     }
+    else
+    {
+        currentview = 0;
+        score = 0;
+        lives = 3;
+        scorekept = false;
+    }
+}
+
+
+
 
     if (currentview == 7)
     {
@@ -783,7 +796,7 @@ void iKeyboard(unsigned char key)
             currentview = 2;
 
             scorekept = false;
-          //start game
+            // Start game
         }
         else if (key == 8)
         {
@@ -918,7 +931,21 @@ void ballmovement()
                         bricks[i][j] = 0;
                         score += 5;
                     }
-                    
+                    // if (rand() % 5 == 0)
+                    // {
+
+                    //     for (int q = 0; q < MAXPOWERUP; q++)
+                    //     {
+                    //         if (powerup[q].enable == 0)
+                    //         {
+                    //             powerup[q].enable = 1;
+                    //             powerup[q].x = brickx + brick_width / 2;
+                    //             powerup[q].y = bricky;
+                    //             powerup[q].functionality = rand() % 2;
+                    //             break;
+                    //         }
+                    //     }
+                    // }
                     if (ball_x + ball_radius >= brickx && ball_x - ball_radius <= brickx + brick_width)
                     {
                         dy = -dy;
@@ -974,11 +1001,21 @@ clip:
         }
         return;
     }
-    if (remainingbricks == 0)
+if (remainingbricks == 0)
+{
+    if (score > highscore)
     {
-        currentview = 9;
-        return;
+        highscore = score;
+        savehighscore();
     }
+    if (!scorekept)
+    {
+        addscoreinboard();
+        scorekept = true;
+    }
+    currentview = 9;
+    return;
+}
 
     if (ball_y < 0)
     {
