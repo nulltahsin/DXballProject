@@ -32,6 +32,34 @@ Welcome to a stunning new take on the classic DX Ball-style arcade game—modern
 
 - **Smart Resume Feature**  
   - Need a break? No problem. The game remembers where you left off! Just click **“Resume”** next time you open it and continue your progress right from where you stopped.
+ 
+
+
+---
+
+
+<div align="center">
+  <h2>Welcome!</h2>
+  <img src="assets/sprites/welcomepage.jpg" alt="Gameplay Page" width="500">
+</div>
+
+<div align="center">
+  <h2>Instructions</h2>
+  <img src="assets/sprites/instructions.jpg" alt="Gameplay Page" width="500">
+</div>
+
+<div align="center">
+  <h2>Levels</h2>
+  <img src="assets/sprites/level1.jpg" alt="Gameplay Page" width="500">
+</div>
+
+
+<div align="center">
+  <h2>Credits</h2>
+  <img src="assets/sprites/creditspage.jpg" alt="Gameplay Page" width="500">
+</div>
+
+
 
 ---
 
