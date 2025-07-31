@@ -72,7 +72,7 @@ Welcome to a stunning new take on the classic DX Ball-style arcade game—modern
 
 ### 🎥 **GamePlay**
 
-- [Youtube Video Link](https://youtu.be/J9kCPZOhV7A?si=nP5pI-Xvn4eHt2Tw)
+- [Youtube Video Link]([https://youtu.be/J9kCPZOhV7A?si=nP5pI-Xvn4eHt2Tw](https://youtu.be/wEcqZjojwuA))
 
 ---
 
