@@ -72,7 +72,7 @@ Welcome to a stunning new take on the classic DX Ball-style arcade game—modern
 
 ### 🎥 **GamePlay**
 
-- [Youtube Video Link]([https://youtu.be/J9kCPZOhV7A?si=nP5pI-Xvn4eHt2Tw](https://youtu.be/wEcqZjojwuA))
+- [Youtube Video Link](https://youtu.be/GlCaEAPLrU0?si=z_mlPhdsmt5dRJWw)
 
 ---
 
@@ -83,11 +83,14 @@ Welcome to a stunning new take on the classic DX Ball-style arcade game—modern
 1. Download the ZIP file from [here](https://github.com/mahirlabibdihan/Smash-Bricks-Game/archive/refs/heads/main.zip) and extract it.
 2. Open `SmashBricks.cbp` in Code::Blocks. The project is already configured with all the necessary settings. You can directly run the project. By default, the main file is `SmashBricks.cpp`. You can remove it and add a different file if you want.
 
-#### **In Terminal:**
 
-**Download the Game:**
+<div>
+  <p><strong>Instructor:</strong></p>
+  <p><a href="https://mahirlabibdihan.github.io/" target="_blank">Mahir Labib Dihan</a></p>
+  <p>Adjunct Lecturer</p>
+  <p>CSE, BUET</p>
+</div>
 
-Clone or download the game repository from GitHub:
 
 ```bash
 git clone https://github.com/mahirlabibdihan/Smash-Bricks-Game.git
