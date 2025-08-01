@@ -53,10 +53,7 @@ Welcome to a stunning new take on the classic DX Ball-style arcade game—modern
   <img src="assets/sprites/level1.jpg" alt="Gameplay Page" width="500">
 </div>
 
-<div align="center">
-  <h2>GamePlay</h2>
-  <img src="assets/sprites/hard.jpg.png" alt="Gameplay Page" width="500">
-</div>
+
 
 
 
